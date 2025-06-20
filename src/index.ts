@@ -11,7 +11,7 @@ const PORT = process.env.PORT;
 app.use(express.static(path.join(__dirname, '../public')));
 
 app.get('/', (req: Request, res: Response) => {
-  res.send('Служба прогноза погоды работает');
+  res.sendFile(path.join(__dirname, '../public/graph.html'));
 });
 
 app.get('/weather', async (req: Request, res: Response) => {

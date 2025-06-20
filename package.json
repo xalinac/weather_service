@@ -1,12 +1,10 @@
 {
   "name": "weather_service",
   "version": "1.0.0",
-  "description": "",
+  "description": "Сервис для получения прогноза погоды по городам с использованием API Open-Meteo. Поддерживает кэширование данных в Redis и отображение графика температуры по часам за следующие 24 часа.",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-      "start": "ts-node src/index.ts",
-      "start:open": "ts-node src/index.ts & npx open-cli http://localhost:3000/graph.html",
-      "build": "tsc"
+    "start": "ts-node src/index.ts",
+    "build": "tsc"
   },
   "repository": {
     "type": "git",
@@ -31,5 +29,7 @@
     "@types/node": "^24.0.3",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3"
-  }
+  },
+  "main": "index.js",
+  "type": "commonjs"
 }
