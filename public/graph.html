@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Прогноз погоды</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 20px;
+        }
+
+        canvas {
+            max-width: 100%;
+            height: 300px;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>График температуры по часам</h2>
+    <input type="text" id="cityInput" placeholder="Введите город" value="Moscow" />
+    <button id="showBtn">Показать</button>
+    <canvas id="weatherChart" width="1200" height="300"></canvas>
+
+    <script>
+        const ctx = document.getElementById('weatherChart').getContext('2d');
+        let chart;
+
+        async function loadData() {
+            const city = document.getElementById('cityInput').value;
+            try {
+                const res = await fetch(`/weather?city=${encodeURIComponent(city)}`);
+                if (!res.ok) throw new Error(`Ошибка: ${res.status}`);
+                const { hourly } = await res.json();
+
+                const now = new Date();
+                const nowUtc = new Date();
+                const endUtc = new Date(nowUtc.getTime() + 24 * 60 * 60 * 1000);
+
+                const filtered = hourly
+                    .map(entry => ({ date: new Date(entry.time), temp: entry.temp }))
+                    .filter(({ date }) => date >= nowUtc && date <= endUtc);
+
+
+                const labels = filtered.map(e => {
+                    const h = e.date.getUTCHours().toString().padStart(2, '0');
+                    return `${h}:00`;
+                });
+                const temps = filtered.map(e => e.temp);
+
+                if (chart) {
+                    chart.destroy();
+                }
+                chart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels,
+                        datasets: [{
+                            label: `Температура (°C)`,
+                            data: temps,
+                            borderColor: 'rgba(255, 99, 132, 1)',
+                            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                            tension: 0.3,
+                            fill: true,
+                        }],
+                    },
+                    options: {
+                        scales: {
+                            x: { title: { display: true, text: 'Время (UTC)' } },
+                            y: { title: { display: true, text: 'Температура °C' } },
+                        },
+                    },
+                });
+            } catch (e) {
+                alert(e.message);
+            }
+        }
+
+        document.getElementById('showBtn').addEventListener('click', loadData);
+
+        // Автозагрузка при старте страницы
+        loadData();
+    </script>
+</body>
+
+</html>
