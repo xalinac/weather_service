@@ -5,6 +5,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
       "start": "ts-node src/index.ts",
+      "start:open": "ts-node src/index.ts & npx open-cli http://localhost:3000/graph.html",
       "build": "tsc"
   },
   "repository": {
